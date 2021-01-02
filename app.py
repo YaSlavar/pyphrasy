@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
 import pymorphy2
-from flask import Flask, request
+from flask import Flask, request, render_template
 from inflect import PhraseInflector, GRAM_CHOICES
 from tools import createXML
 
 app = Flask(__name__)
 app.debug = True
+
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
 
 
 @app.route("/inflect", methods=['GET', 'POST'])
@@ -44,7 +49,7 @@ def inflect():
     formatted_result = 'None'
 
     if response_type == 'json':
-        formatted_result = json.dumps(result)
+        formatted_result = json.dumps(result, ensure_ascii=False).encode('utf8')
     elif response_type == 'xml':
         formatted_result = createXML(result)
 

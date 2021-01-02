@@ -46,7 +46,6 @@ class InflectTestSuite(unittest.TestCase):
             print(genitive)
             self.assertEqual(genitive, result)
 
-
     def test_inflection_with_master_accusative(self):
         phrases = (
             (u'взбитые сливки', u'взбитые сливки'),
