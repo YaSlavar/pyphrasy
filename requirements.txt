@@ -1,5 +1,8 @@
 pymorphy2 >=0.8,<0.9
 pymorphy2-dicts 
 DAWG-Python >=0.7,<0.8
-Flask >=1.1,<1.2
-gunicorn >=19,<=20
+
+fastapi~=0.63.0
+setuptools~=49.2.1
+uvicorn~=0.13.3
+pydantic~=1.7.3
