@@ -56,6 +56,7 @@ def inflect(phrase: str = 'Тестовое слово',
     # Цикл по граммемам
     for forms_string in forms:
         # Получение граммемы
+        forms_string = forms_string.lower()
         form_set = set(forms_string.split(',')) & set(GRAM_CHOICES)
         # Преобразование фразы
         inflected_phrase = inflector.inflect(phrase, form_set)
