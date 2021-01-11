@@ -38,6 +38,7 @@ class InflectTestSuite(unittest.TestCase):
             (u'полные штаны', u'полных штанов'),
             (u'бедные люди', u'бедных людей'),
             (u'стальные плиты', u'стальных плит'),
+            (u'поленок вячеслав михайлович', u'поленка вячеслава михайловича')
 
         )
         for phrase, result in phrases:
@@ -60,6 +61,7 @@ class InflectTestSuite(unittest.TestCase):
             (u'моя прекрасная няня', u'мою прекрасную няню'),
             (u'полные штаны', u'полные штаны'),
             (u'бедные люди', u'бедных людей'),
+            (u'поленок вячеслав михайлович', u'поленка вячеслава михайловича')
         )
         for phrase, result in phrases:
             master = self.inflector.select_master(phrase.split(' '))
@@ -81,6 +83,7 @@ class InflectTestSuite(unittest.TestCase):
             (u'мои прекрасные няни', u'моя прекрасная няня'),
             (u'полные штаны', u'полные штаны'),
             (u'бедные люди', u'бедный человек'),
+            (u'поленок вячеслав михайлович', u'поленок вячеслав михайлович')
         )
         for phrase, result in phrases:
             master = self.inflector.select_master(phrase.split(' '))
@@ -102,6 +105,7 @@ class InflectTestSuite(unittest.TestCase):
             (u'моя прекрасная няня', u'мои прекрасные няни'),
             (u'полные штаны', u'полные штаны'),
             (u'бедные люди', u'бедные люди'),
+            (u'поленок вячеслав михайлович', u'поленки вячеславы михайловичи')
         )
         for phrase, result in phrases:
             master = self.inflector.select_master(phrase.split(' '))

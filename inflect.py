@@ -100,7 +100,7 @@ class PhraseInflector(object):
             dependent = None
             for version in parsed_chunk:
                 # If POS should adopt the form AND was in the same case(падеж) which the master word had
-                if version.tag.POS in (u'ADJF', u'PRTF') and version.tag.case == master_word.tag.case:
+                if version.tag.POS in (u'NOUN', u'ADJF', u'PRTF') and version.tag.case == master_word.tag.case:
                     infl = form | {inflected_master.tag.number}
                     # If in the single number, adopt the gender of master word
                     if inflected_master.tag.number == 'sing':
@@ -161,18 +161,18 @@ class PhraseInflector(object):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Inflect input phrase')
-    parser.add_argument('word', help='Phrase to inflect')
-    parser.add_argument('--gram', help='grammem from https://pymorphy2.readthedocs.org/en/latest/user/grammemes.html',
-                        action='append',
-                        required=True,
-                        choices=GRAM_CHOICES)
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=0, choices=LOGGING_LEVELS)
-    args = parser.parse_args()
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGGING_LEVELS[args.verbose])
+    # parser = argparse.ArgumentParser(description='Inflect input phrase')
+    # parser.add_argument('word', help='Phrase to inflect')
+    # parser.add_argument('--gram', help='grammem from https://pymorphy2.readthedocs.org/en/latest/user/grammemes.html',
+    #                     action='append',
+    #                     required=True,
+    #                     choices=GRAM_CHOICES)
+    # parser.add_argument('-v', '--verbose', type=int, required=False, default=0, choices=LOGGING_LEVELS)
+    # args = parser.parse_args()
+    # logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGGING_LEVELS[args.verbose])
 
     morph = pymorphy2.MorphAnalyzer()
     inflector = PhraseInflector(morph)
-    if isinstance(args.word, bytes):
-        args.word = args.word.decode('utf8')
-    print(inflector.inflect(args.word, args.gram))
+
+    phrase = 'Поленок Вячеслав Михайлович'
+    print(inflector.inflect(phrase, 'datv'))
