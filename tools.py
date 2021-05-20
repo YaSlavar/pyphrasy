@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from io import BytesIO
+import re
 
 
 def create_XML(response: dict) -> str:
@@ -40,7 +41,29 @@ def change_case(source_str: str, inflected_str: str) -> str:
     :param inflected_str: Преобразованная строка
     :return: Преобразованная строка с восстановленным регистром
     """
+    # Фраза в кавычках
+    PATTERN = r'(["|«][\w\d \t\v\r\n\f]*["|»])'
+
     corrected_inflected_word_list = []
+
+    # Замена преобразованного словосочетания в кавычках на словосочетание из исходной фразы
+    inflected_str_by_pattern = re.split(PATTERN, inflected_str)
+    marked_srt_by_pattern = re.findall(PATTERN, source_str)
+
+    formatted_str = ''
+    index_marked_phrase_in_str = 0
+    try:
+        for phrase in inflected_str_by_pattern:
+            # Если подстрока в кавычках
+            if re.search(PATTERN, phrase):
+                # Замена подстрокой из исходной строки
+                phrase = marked_srt_by_pattern[index_marked_phrase_in_str]
+                index_marked_phrase_in_str += 1
+
+            formatted_str += phrase
+        inflected_str = formatted_str
+    except IndexError as err:
+        pass
 
     # Получение списка слов исходной и преобразованной строк
     source_str_word_list = source_str.split(' ')
@@ -70,3 +93,13 @@ def change_case(source_str: str, inflected_str: str) -> str:
         corrected_inflected_word_list.append(corrected_inflected_word)
 
     return ' '.join(corrected_inflected_word_list)
+
+
+if __name__ == '__main__':
+    res = change_case('Государственное бюджетное учреждение города Москвы "Московская ярмарка"',
+                      'Государственного бюджетного учреждения города Москвы "Московского ярмарки"')
+
+    # res = change_case('ааа "ббб" ввв "ггг" "" ддд «еее»',
+    #                   'аааааа "бббббб" вввввв "ггггггг" "" ддддддд «ееееееее»')
+
+    print(res)

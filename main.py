@@ -1,16 +1,34 @@
+# -*- coding: utf-8 -*-
+
 import json
 import pymorphy2
 from inflect import PhraseInflector, GRAM_CHOICES
 from tools import create_XML, change_case
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
 from typing import List, Optional
 import uvicorn
+from pathlib import Path
+from custom_logger import CustomizeLogger
+import logging
 
-app = FastAPI(title="pyphrasy")
+# Инициализация
+logger = logging.getLogger(__name__)
+config_path = Path(__file__).with_name("logging_config.json")
 
 
-def inflect(phrase: str = 'Тестовое слово',
+def create_app():
+    app = FastAPI(title="pyphrasy", debug=False)
+    logger_obj = CustomizeLogger.make_logger(config_path)
+    app.logger = logger_obj
+
+    return app
+
+
+app = create_app()
+
+
+def inflect(request: Request, phrase: str = 'Тестовое слово',
             forms: Optional[List[str]] = Query(['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']),
             response_type: Optional[str] = 'json'):
     """
@@ -68,22 +86,25 @@ def inflect(phrase: str = 'Тестовое слово',
     # Формирование результируещей строки
     if response_type == 'json':
         formatted_result = json.dumps(result, ensure_ascii=False).encode('utf8')
+        request.app.logger.info([phrase, formatted_result.decode('utf-8')])
         return Response(content=formatted_result, media_type="application/json")
     elif response_type == 'xml':
         formatted_result = create_XML(result)
+        request.app.logger.info([phrase, formatted_result])
         return Response(content=formatted_result, media_type="application/xml")
 
 
 @app.get("/", tags=["index"])
-def index() -> RedirectResponse:
+def index(request: Request) -> RedirectResponse:
     """
     Документация к API
     """
+
     return RedirectResponse("/docs")
 
 
 @app.get("/inflect", tags=["inflect"], response_description="Inflected phrases")
-def inflect_get(phrase: str = 'Тестовое слово',
+def inflect_get(request: Request, phrase: str = 'Тестовое слово',
                 forms: Optional[List[str]] = Query(['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']),
                 response_type: Optional[str] = 'json') -> Response:
     """
@@ -103,11 +124,11 @@ def inflect_get(phrase: str = 'Тестовое слово',
 
     - **response_type**: Формат ответа json|xml
     """
-    return inflect(phrase, forms, response_type)
+    return inflect(request, phrase, forms, response_type)
 
 
 @app.post("/inflect", tags=["inflect"], response_description="Inflected phrases")
-def inflect_post(phrase: str = 'Тестовое слово',
+def inflect_post(request: Request, phrase: str = 'Тестовое слово',
                  forms: Optional[List[str]] = Query(['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']),
                  response_type: Optional[str] = 'json') -> Response:
     """
@@ -127,7 +148,7 @@ def inflect_post(phrase: str = 'Тестовое слово',
 
     - **response_type**: Формат ответа json|xml
     """
-    return inflect(phrase, forms, response_type)
+    return inflect(request, phrase, forms, response_type)
 
 
 if __name__ == "__main__":
